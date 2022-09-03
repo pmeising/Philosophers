@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/03 15:24:19 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/03 16:32:43 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,16 @@
 
 typedef struct s_prgrm
 {
-	int			*thread_ids;
-	int			start_time;
+	pthread_t	*thread_ids; // stores the IDs of each thread at the index of its value
+	int			*array; // stores numbers 0 through n in an array.
+	int			start_time; // stores the starting time.
+// inputs:
 	int			nbr_of_philosophers;
 	int			time_to_die;
 	int			time_to_eat;
 	int			time_to_sleep;
 	int			nbr_of_meals;
-	// t_philos	*philos;
 }				t_prgrm;
-
-// typedef struct s_philos  // index structure
-// {
-// 	void		*vars;
-// 	int			*index;
-// }				t_philos;
 
 // Error handling:
 
