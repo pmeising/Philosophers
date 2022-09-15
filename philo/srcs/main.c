@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 14:10:01 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/15 15:02:31 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@ long	ft_get_time()
 	return ((long)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-// initializes
+// initializes the variables (vars) struct with the input values
+// also takes time of start to compare to later time periods.
 
-void	ft_init_structs(t_prgrm *vars, int argc, char **argv)
+int	ft_init_structs(t_prgrm *vars, int argc, char **argv)
 {
 	vars->nbr_of_philosophers = ft_atoi_phil(argv[1]);
 	vars->time_to_die = ft_atoi_phil(argv[2]);
@@ -33,17 +34,24 @@ void	ft_init_structs(t_prgrm *vars, int argc, char **argv)
 	vars->time_to_sleep = ft_atoi_phil(argv[4]);
 	if (argc == 6)
 		vars->nbr_of_meals = ft_atoi_phil(argv[5]);
+	if (ft_check_values(vars) == 1)
+	{
+		ft_error(3);
+		return (1);
+	}
 	vars->start_time = ft_get_time();
 	printf("time: %ld\n", vars->start_time);
+	return (0);
 }
 
 int	main(int argc, char **argv)
 {
 	t_prgrm	vars;
 
-	if (argc == 5 || argc == 6)
+	if ((argc == 5 || argc == 6) && ft_input_check(argv) == 0)
 	{
-		ft_init_structs(&vars, argc, argv);
+		if (ft_init_structs(&vars, argc, argv) == 1)
+			return (1);
 	}
 	else
 		ft_error(1);
