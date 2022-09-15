@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 16:41:53 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/15 21:04:17 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	}
 	vars->start_time = ft_get_time();
 	printf("time: %ld\n", vars->start_time);
+	vars->philos = malloc((sizeof(t_philos) * vars->nbr_of_philosophers) + 1);
 	return (0);
 }
 
@@ -48,12 +49,18 @@ int	ft_init_structs(t_prgrm *vars)
 {
 	int	i;
 	int	nbr_philos;
+	t_philos	philos;
 
 	i = 0;
 	nbr_philos = vars->nbr_of_philosophers;
 	while (nbr_philos > 0)
 	{
-		
+		vars->philos[i].id = i + 1;
+		vars->philos[i].time_to_die = vars->time_to_die;
+		vars->philos[i].time_to_eat = vars->time_to_eat;
+		vars->philos[i].time_to_sleep = vars->time_to_sleep;
+		vars->philos[i].start_time = vars->start_time;
+		vars->philos[i].last_meal = 0;
 		nbr_philos--;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 16:41:52 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/15 21:04:03 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ typedef	struct s_philos
 	int			time_to_eat;
 	int			time_to_sleep;
 	int			nbr_of_meals;
+	long		start_time;
+	long		last_meal;
+	pthread_t	thread;
+
 }				t_philos;
 
 typedef struct s_prgrm
