@@ -6,7 +6,7 @@
 #    By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 09:28:01 by pmeising          #+#    #+#              #
-#    Updated: 2022/09/03 16:13:02 by pmeising         ###   ########.fr        #
+#    Updated: 2022/09/15 12:51:08 by pmeising         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ RM			:= rm -f
 
 HEADER		:= philosophers.h
 
-DIR			:= ./
+DIR			:= ./srcs/
 
 SRCS		:= $(DIR)main.c	\
 			:= $(DIR)ft_error.c	\
