@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 15:10:18 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:41:52 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,17 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+// Philo structure______________________//
+
+typedef	struct s_philos
+{
+	int			id;
+	int			time_to_die;
+	int			time_to_eat;
+	int			time_to_sleep;
+	int			nbr_of_meals;
+}				t_philos;
+
 typedef struct s_prgrm
 {
 	pthread_t	*thread_ids; // stores the IDs of each thread at the index of its value
@@ -30,6 +41,7 @@ typedef struct s_prgrm
 	int			time_to_eat;
 	int			time_to_sleep;
 	int			nbr_of_meals;
+	t_philos	*philos;
 }				t_prgrm;
 
 int		ft_atoi_phil(const char *nptr);

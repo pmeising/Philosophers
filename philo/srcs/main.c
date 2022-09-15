@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 15:02:31 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:41:53 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ long	ft_get_time()
 // initializes the variables (vars) struct with the input values
 // also takes time of start to compare to later time periods.
 
-int	ft_init_structs(t_prgrm *vars, int argc, char **argv)
+int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 {
 	vars->nbr_of_philosophers = ft_atoi_phil(argv[1]);
 	vars->time_to_die = ft_atoi_phil(argv[2]);
@@ -44,13 +44,29 @@ int	ft_init_structs(t_prgrm *vars, int argc, char **argv)
 	return (0);
 }
 
+int	ft_init_structs(t_prgrm *vars)
+{
+	int	i;
+	int	nbr_philos;
+
+	i = 0;
+	nbr_philos = vars->nbr_of_philosophers;
+	while (nbr_philos > 0)
+	{
+		
+		nbr_philos--;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_prgrm	vars;
 
 	if ((argc == 5 || argc == 6) && ft_input_check(argv) == 0)
 	{
-		if (ft_init_structs(&vars, argc, argv) == 1)
+		if (ft_init_vars(&vars, argc, argv) == 1)
+			return (1);
+		if (ft_init_structs(&vars) == 1)
 			return (1);
 	}
 	else
