@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 17:25:27 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/16 20:19:44 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 
 typedef struct s_forks
 {
-	int			id;
+	int				id;
+	pthread_mutex_t	mutex;
 }				t_forks;
 
 // Philo structure______________________//

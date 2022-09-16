@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 14:56:01 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 17:26:16 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/16 21:25:55 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,32 @@ void	*ft_routine(void *args)
 	// printf("%.2ld: ", ft_get_time() - philosopher->start_time);
 	// if (philosopher->id == 3)
 	// 	usleep(1000);
-	printf("%ld: This is my ID: %d\nI have fork # %d to my left\nand fork # %d to my right\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->left_fork->id, philosopher->right_fork->id);
+	// printf("%ld: This is my ID: %d\nI have fork # %d to my left\nand fork # %d to my right\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->left_fork->id, philosopher->right_fork->id);
+	while (1)
+	{
+
+		if (philosopher->id % 2 == 0)
+		{
+			pthread_mutex_lock(&philosopher->left_fork->mutex);
+			printf("%ld: %d took fork %d.\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->left_fork->id);
+			pthread_mutex_unlock(&philosopher->left_fork->mutex);
+			pthread_mutex_lock(&philosopher->right_fork->mutex);
+			printf("%ld: %d took fork %d.\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->right_fork->id);
+			usleep(philosopher->time_to_eat);
+			pthread_mutex_unlock(&philosopher->right_fork->mutex);
+		}
+		else
+		{
+			usleep(100);
+			pthread_mutex_lock(&philosopher->left_fork->mutex);
+			printf("%ld: %d took fork %d.\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->left_fork->id);
+			pthread_mutex_unlock(&philosopher->left_fork->mutex);
+			pthread_mutex_lock(&philosopher->right_fork->mutex);
+			printf("%ld: %d took fork %d.\n", (ft_get_time() - philosopher->start_time), philosopher->id, philosopher->right_fork->id);
+			pthread_mutex_unlock(&philosopher->right_fork->mutex);
+		}
+	}
+	printf("Finished execution.\n");
 	return (NULL);
 }
 

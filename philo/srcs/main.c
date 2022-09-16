@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 18:46:09 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/16 21:24:04 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 {
 	vars->argc = argc;
 	vars->nbr_of_philosophers = ft_atoi_phil(argv[1]);
-	vars->time_to_die = ft_atoi_phil(argv[2]);
-	vars->time_to_eat = ft_atoi_phil(argv[3]);
-	vars->time_to_sleep = ft_atoi_phil(argv[4]);
+	vars->time_to_die = (ft_atoi_phil(argv[2]) * 1000);
+	vars->time_to_eat = (ft_atoi_phil(argv[3]) * 1000);
+	vars->time_to_sleep = (ft_atoi_phil(argv[4]) * 1000);
 	if (argc == 6)
 		vars->nbr_of_meals = ft_atoi_phil(argv[5]);
 	if (ft_check_values(vars) == 1)
@@ -68,6 +68,8 @@ int	ft_init_structs(t_prgrm *vars)
 		vars->philos[i].start_time = vars->start_time;
 		vars->philos[i].last_meal = 0;
 		vars->forks[i].id = i + 1;
+		pthread_mutex_init(&vars->forks[i].mutex, NULL);
+		// printf("Mutex created.\n");
 		vars->philos[i].left_fork = &vars->forks[i];
 		if (i == 0)
 			vars->philos[i].right_fork = &vars->forks[vars->nbr_of_philosophers - 1];
