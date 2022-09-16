@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 14:45:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 15:10:05 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/16 15:57:36 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	ft_check_values(t_prgrm *vars)
 {
 	if (vars->nbr_of_philosophers > 200 || vars->nbr_of_philosophers < 1)
 		return (1);
-	else if (vars->nbr_of_meals < 1 || vars->nbr_of_meals > MAXINT)
+	else if (vars->argc == 6 && (vars->nbr_of_meals < 1 || vars->nbr_of_meals > MAXINT))
 		return (1);
 	else if (vars->time_to_die < 1 || vars->time_to_die > MAXINT)
 		return (1);

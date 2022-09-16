@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 21:04:17 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/16 18:46:09 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ long	ft_get_time()
 
 	gettimeofday(&tv, NULL);
 	return ((long)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	// return ((long)(tv.tv_usec * 1000));
 }
 
 // initializes the variables (vars) struct with the input values
@@ -28,6 +29,7 @@ long	ft_get_time()
 
 int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 {
+	vars->argc = argc;
 	vars->nbr_of_philosophers = ft_atoi_phil(argv[1]);
 	vars->time_to_die = ft_atoi_phil(argv[2]);
 	vars->time_to_eat = ft_atoi_phil(argv[3]);
@@ -42,14 +44,18 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	vars->start_time = ft_get_time();
 	printf("time: %ld\n", vars->start_time);
 	vars->philos = malloc((sizeof(t_philos) * vars->nbr_of_philosophers) + 1);
+	vars->forks = malloc((sizeof(t_forks) * vars->nbr_of_philosophers) + 1);
 	return (0);
 }
 
+// For Philosopher 2, the position in the array of structs is 1. This also 
+// corresponds to this philosophers ***left*** fork. (Unless it is philosopher
+// n).
+
 int	ft_init_structs(t_prgrm *vars)
 {
-	int	i;
-	int	nbr_philos;
-	t_philos	philos;
+	int			i;
+	int			nbr_philos;
 
 	i = 0;
 	nbr_philos = vars->nbr_of_philosophers;
@@ -61,8 +67,16 @@ int	ft_init_structs(t_prgrm *vars)
 		vars->philos[i].time_to_sleep = vars->time_to_sleep;
 		vars->philos[i].start_time = vars->start_time;
 		vars->philos[i].last_meal = 0;
+		vars->forks[i].id = i + 1;
+		vars->philos[i].left_fork = &vars->forks[i];
+		if (i == 0)
+			vars->philos[i].right_fork = &vars->forks[vars->nbr_of_philosophers - 1];
+		else
+			vars->philos[i].right_fork = &vars->forks[i - 1];
 		nbr_philos--;
+		i++;
 	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -72,9 +86,27 @@ int	main(int argc, char **argv)
 	if ((argc == 5 || argc == 6) && ft_input_check(argv) == 0)
 	{
 		if (ft_init_vars(&vars, argc, argv) == 1)
-			return (1);
+		{
+			printf("Initialization of vars failed.\n");
+			return (0);
+		}
+		printf("Initialized the vars struct.\n");
 		if (ft_init_structs(&vars) == 1)
-			return (1);
+		{
+			printf("Initialization of philos structs failed.\n");
+			return (0);
+		}
+		printf("Initialized the philos structs.\n");
+		if (ft_start_routine(&vars) == 1)
+		{
+			printf("Routines returned error.\n");
+			return (0);
+		}
+		if ((ft_join_threads(&vars)) != 0)
+		{
+			printf("Threads couldn't be joined.\n");
+			return (0);
+		}
 	}
 	else
 		ft_error(1);
