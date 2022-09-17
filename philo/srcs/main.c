@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 21:24:04 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/17 19:51:17 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ long	ft_get_time()
 
 	gettimeofday(&tv, NULL);
 	return ((long)(tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-	// return ((long)(tv.tv_usec * 1000));
 }
 
 // initializes the variables (vars) struct with the input values
@@ -30,10 +29,11 @@ long	ft_get_time()
 int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 {
 	vars->argc = argc;
+	vars->philo_died = 0;
 	vars->nbr_of_philosophers = ft_atoi_phil(argv[1]);
-	vars->time_to_die = (ft_atoi_phil(argv[2]) * 1000);
-	vars->time_to_eat = (ft_atoi_phil(argv[3]) * 1000);
-	vars->time_to_sleep = (ft_atoi_phil(argv[4]) * 1000);
+	vars->time_to_die = (ft_atoi_phil(argv[2]));
+	vars->time_to_eat = (ft_atoi_phil(argv[3]));
+	vars->time_to_sleep = (ft_atoi_phil(argv[4]));
 	if (argc == 6)
 		vars->nbr_of_meals = ft_atoi_phil(argv[5]);
 	if (ft_check_values(vars) == 1)
@@ -42,7 +42,7 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 		return (1);
 	}
 	vars->start_time = ft_get_time();
-	printf("time: %ld\n", vars->start_time);
+	printf("time: %2.ld\n", vars->start_time);
 	vars->philos = malloc((sizeof(t_philos) * vars->nbr_of_philosophers) + 1);
 	vars->forks = malloc((sizeof(t_forks) * vars->nbr_of_philosophers) + 1);
 	return (0);
@@ -61,14 +61,17 @@ int	ft_init_structs(t_prgrm *vars)
 	nbr_philos = vars->nbr_of_philosophers;
 	while (nbr_philos > 0)
 	{
+		pthread_mutex_init(&vars->forks[i].mutex, NULL);
+		pthread_mutex_init(&vars->printf_mutex, NULL);
 		vars->philos[i].id = i + 1;
 		vars->philos[i].time_to_die = vars->time_to_die;
 		vars->philos[i].time_to_eat = vars->time_to_eat;
 		vars->philos[i].time_to_sleep = vars->time_to_sleep;
 		vars->philos[i].start_time = vars->start_time;
 		vars->philos[i].last_meal = 0;
+		vars->philos[i].philo_died = &vars->philo_died;
+		vars->philos[i].printf_mutex = &vars->printf_mutex;
 		vars->forks[i].id = i + 1;
-		pthread_mutex_init(&vars->forks[i].mutex, NULL);
 		// printf("Mutex created.\n");
 		vars->philos[i].left_fork = &vars->forks[i];
 		if (i == 0)

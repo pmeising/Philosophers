@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 20:19:44 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/17 22:27:58 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,27 @@ typedef struct s_forks
 
 typedef	struct s_philos
 {
-	int			id;
-	int			time_to_die;
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			nbr_of_meals;
-	long		start_time;
-	long		last_meal;
-	pthread_t	thread;
+	int				id;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nbr_of_meals;
+	long			start_time;
+	long			last_meal;
+	int				*philo_died;
+	pthread_t		thread;
+	
 	//_________forks_________//
-	t_forks		*left_fork;
-	t_forks		*right_fork;
+	
+	t_forks			*left_fork;
+	t_forks			*right_fork;
 
+	//_________mutexes_________//
+
+	pthread_mutex_t	*philo_died_mutex;
+	pthread_mutex_t	last_meal_mutex;
+	pthread_mutex_t	*printf_mutex;
+	
 }				t_philos;
 
 
@@ -50,18 +59,22 @@ typedef	struct s_philos
 
 typedef struct s_prgrm
 {
-	pthread_t	*thread_ids; // stores the IDs of each thread at the index of its value
-	int			*array; // stores numbers 0 through n in an array.
-	long		start_time; // stores the starting time.
+	pthread_t		*thread_ids; // stores the IDs of each thread at the index of its value
+	pthread_t		waiter;
+	int				*array; // stores numbers 0 through n in an array.
+	long			start_time; // stores the starting time.
 // inputs:
-	int			argc;
-	int			nbr_of_philosophers;
-	int			time_to_die;
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			nbr_of_meals;
-	t_philos	*philos;
-	t_forks		*forks;
+	int				argc;
+	int				nbr_of_philosophers;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nbr_of_meals;
+	int				philo_died;
+	t_philos		*philos;
+	t_forks			*forks;
+	pthread_mutex_t	printf_mutex;
+	pthread_mutex_t	philo_died_mutex;
 }				t_prgrm;
 
 // Input check functions:
@@ -73,6 +86,7 @@ int		ft_atoi_phil(const char *nptr);
 int		ft_start_routine(t_prgrm *vars);
 void	*ft_routine(void *args);
 int		ft_join_threads(t_prgrm *vars);
+void	*ft_waiter_routine(void *args);
 
 // Time management:
 
