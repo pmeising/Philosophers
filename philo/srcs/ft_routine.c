@@ -34,9 +34,12 @@ void	ft_philo_eat(t_philos *philosopher)
 	printf("%ld: %d has taken a fork.\n", (time - philosopher->start_time), philosopher->id);
 	printf("%ld: %d is eating.\n", (time - philosopher->start_time), philosopher->id);
 	pthread_mutex_unlock(philosopher->printf_mutex);
-	pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
-	*philosopher->meals_to_eat = *philosopher->meals_to_eat - 1;
-	pthread_mutex_unlock(&philosopher->meals_to_eat_mutex);
+	if (philosopher->argc == 6)
+	{
+		pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
+		*philosopher->meals_to_eat = *philosopher->meals_to_eat - 1;
+		pthread_mutex_unlock(&philosopher->meals_to_eat_mutex);
+	}
 	while (ft_get_time() < end_of_meal)
 	{
 		pthread_mutex_lock(&philosopher->philo_died_mutex);
@@ -64,6 +67,8 @@ void	ft_philo_sleep(t_philos *philosopher)
 		return ;
 	}
 	pthread_mutex_unlock(&philosopher->philo_died_mutex);
+	if (*philosopher->meals_to_eat == 0)
+		return ;
 	pthread_mutex_lock(philosopher->printf_mutex);
 	printf("%ld: %d is sleeping.\n", time - philosopher->start_time, philosopher->id);
 	pthread_mutex_unlock(philosopher->printf_mutex);
@@ -145,6 +150,9 @@ void	*ft_routine(void *args)
 		
 		// Sleeps the requested time interval and just sits there.
 		ft_philo_sleep(philosopher);
+		if (philosopher->argc == 6)
+			if (*philosopher->meals_to_eat == 0)
+				return (NULL);
 		// Calculates the time until next meal has to be consumed.
 		ft_philo_think(philosopher);
 	}

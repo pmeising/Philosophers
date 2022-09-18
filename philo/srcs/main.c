@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 22:22:30 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:43:18 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int	ft_init_structs(t_prgrm *vars)
 		pthread_mutex_init(&vars->philos[i].philo_died_mutex, NULL);
 		pthread_mutex_init(&vars->philos[i].meals_to_eat_mutex, NULL);
 		vars->philos[i].id = i + 1;
+		vars->philos[i].argc = vars->argc;
 		vars->philos[i].time_to_die = vars->time_to_die;
 		vars->philos[i].time_to_eat = vars->time_to_eat;
 		vars->philos[i].time_to_sleep = vars->time_to_sleep;
@@ -80,9 +81,11 @@ int	ft_init_structs(t_prgrm *vars)
 		vars->philos[i].philo_died = &vars->philo_died;
 		vars->philos[i].printf_mutex = &vars->printf_mutex;
 		vars->forks[i].id = i + 1;
-		vars->meals_to_eat[i] = vars->philos[i].nbr_of_meals;
 		if (vars->argc == 6)
+		{
+			vars->meals_to_eat[i] = vars->nbr_of_meals;
 			vars->philos[i].meals_to_eat = &vars->meals_to_eat[i];
+		}
 		// printf("Mutex created.\n");
 		vars->philos[i].left_fork = &vars->forks[i];
 		if (i == 0)
@@ -148,38 +151,3 @@ int	main(int argc, char **argv)
 	ft_free_structs(&vars);
 	return (0);
 }
-
-// // "i" passes through the number of the philosopher to the thread to be 'self-aware'
-
-// int	ft_init_threads(t_philos number)
-// {
-// 	pthread_t	newthread;
-// 	int			result;
-
-// 	result = pthread_create(&newthread, NULL, ft_routine(), vars);
-// 	return (result);
-// }
-
-// // philo nbrs start at 1, not at 0. First Philo is nbr 1, not 0. subject p. 6
-
-// void	ft_init_philos(t_prgrm *vars, int n)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i <= n)
-// 	{
-// 		ft_init_threads(vars->philos[i]);
-// 		i++;
-// 	}
-// }
-
-// void	ft_init_struct(t_prgrm *vars, char **argv)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	gettimeofday(vars->start_time, NULL);
-// 	printf("Start time: %ld\n", vars->start_time);
-// 	vars->philos = malloc((sizeof(t_philos) * vars->nbr_of_philosophers) + 1);
-// }

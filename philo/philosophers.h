@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 21:22:25 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:26:15 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_forks
 typedef	struct s_philos
 {
 	int				id;
+	int				argc;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
@@ -63,7 +64,7 @@ typedef struct s_prgrm
 {
 	pthread_t		*thread_ids; // stores the IDs of each thread at the index of its value
 	pthread_t		waiter;
-	int				*meals_to_eat; // stores numbers 0 through n in an array.
+	int				*meals_to_eat;
 	long			start_time; // stores the starting time.
 // inputs:
 	int				argc;

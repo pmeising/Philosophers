@@ -6,11 +6,30 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 21:54:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 19:01:07 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:41:06 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philosophers.h"
+
+int	ft_check_if_finished(t_prgrm *vars)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(&vars->meals_to_eat_mutex);
+	while (vars->meals_to_eat[i])
+	{
+		if (vars->meals_to_eat[i] != 0)
+		{
+			pthread_mutex_unlock(&vars->meals_to_eat_mutex);
+			return (1);
+		}
+		i++;
+	}
+	pthread_mutex_unlock(&vars->meals_to_eat_mutex);
+	return (0);
+}
 
 void	*ft_waiter_routine(void *args)
 {
@@ -21,6 +40,8 @@ void	*ft_waiter_routine(void *args)
 	i = 0;
 	while (1)
 	{
+		if (ft_check_if_finished(vars) == 0)
+			return (NULL);
 		pthread_mutex_lock(&vars->philos[i].last_meal_mutex);
 		if ((ft_get_time() - vars->philos[i].last_meal) >= vars->time_to_die)
 		{
