@@ -34,6 +34,9 @@ void	ft_philo_eat(t_philos *philosopher)
 	printf("%ld: %d has taken a fork.\n", (time - philosopher->start_time), philosopher->id);
 	printf("%ld: %d is eating.\n", (time - philosopher->start_time), philosopher->id);
 	pthread_mutex_unlock(philosopher->printf_mutex);
+	pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
+	*philosopher->meals_to_eat = *philosopher->meals_to_eat - 1;
+	pthread_mutex_unlock(&philosopher->meals_to_eat_mutex);
 	while (ft_get_time() < end_of_meal)
 	{
 		pthread_mutex_lock(&philosopher->philo_died_mutex);

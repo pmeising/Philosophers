@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 17:37:21 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 21:22:25 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef	struct s_philos
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				nbr_of_meals;
+	int				*meals_to_eat;
 	long			start_time;
 	long			last_meal;
 	int				*philo_died;
@@ -51,6 +52,7 @@ typedef	struct s_philos
 	pthread_mutex_t	philo_died_mutex;
 	pthread_mutex_t	last_meal_mutex;
 	pthread_mutex_t	*printf_mutex;
+	pthread_mutex_t	meals_to_eat_mutex;
 	
 }				t_philos;
 
@@ -61,7 +63,7 @@ typedef struct s_prgrm
 {
 	pthread_t		*thread_ids; // stores the IDs of each thread at the index of its value
 	pthread_t		waiter;
-	int				*array; // stores numbers 0 through n in an array.
+	int				*meals_to_eat; // stores numbers 0 through n in an array.
 	long			start_time; // stores the starting time.
 // inputs:
 	int				argc;
@@ -75,6 +77,7 @@ typedef struct s_prgrm
 	t_forks			*forks;
 	pthread_mutex_t	printf_mutex;
 	pthread_mutex_t	philo_died_mutex;
+	pthread_mutex_t	meals_to_eat_mutex;
 }				t_prgrm;
 
 // Input check functions:

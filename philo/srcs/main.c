@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 18:51:11 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:22:30 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	vars->time_to_eat = (ft_atoi_phil(argv[3]));
 	vars->time_to_sleep = (ft_atoi_phil(argv[4]));
 	if (argc == 6)
+	{
 		vars->nbr_of_meals = ft_atoi_phil(argv[5]);
+		vars->meals_to_eat = malloc((sizeof(int) * vars->nbr_of_meals) + 1);
+	}
 	if (ft_check_values(vars) == 1)
 	{
 		ft_error(3);
@@ -47,6 +50,7 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	vars->forks = malloc((sizeof(t_forks) * vars->nbr_of_philosophers) + 1);
 	pthread_mutex_init(&vars->printf_mutex, NULL);
 	pthread_mutex_init(&vars->philo_died_mutex, NULL);
+	pthread_mutex_init(&vars->meals_to_eat_mutex, NULL);
 	vars->philo_died = 0;
 	return (0);
 }
@@ -66,6 +70,7 @@ int	ft_init_structs(t_prgrm *vars)
 	{
 		pthread_mutex_init(&vars->forks[i].mutex, NULL);
 		pthread_mutex_init(&vars->philos[i].philo_died_mutex, NULL);
+		pthread_mutex_init(&vars->philos[i].meals_to_eat_mutex, NULL);
 		vars->philos[i].id = i + 1;
 		vars->philos[i].time_to_die = vars->time_to_die;
 		vars->philos[i].time_to_eat = vars->time_to_eat;
@@ -75,6 +80,9 @@ int	ft_init_structs(t_prgrm *vars)
 		vars->philos[i].philo_died = &vars->philo_died;
 		vars->philos[i].printf_mutex = &vars->printf_mutex;
 		vars->forks[i].id = i + 1;
+		vars->meals_to_eat[i] = vars->philos[i].nbr_of_meals;
+		if (vars->argc == 6)
+			vars->philos[i].meals_to_eat = &vars->meals_to_eat[i];
 		// printf("Mutex created.\n");
 		vars->philos[i].left_fork = &vars->forks[i];
 		if (i == 0)
