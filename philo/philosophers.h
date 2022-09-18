@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/17 22:27:58 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 17:37:21 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef	struct s_philos
 
 	//_________mutexes_________//
 
-	pthread_mutex_t	*philo_died_mutex;
+	pthread_mutex_t	philo_died_mutex;
 	pthread_mutex_t	last_meal_mutex;
 	pthread_mutex_t	*printf_mutex;
 	

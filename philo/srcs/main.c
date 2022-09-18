@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/17 19:51:17 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/18 18:51:11 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	printf("time: %2.ld\n", vars->start_time);
 	vars->philos = malloc((sizeof(t_philos) * vars->nbr_of_philosophers) + 1);
 	vars->forks = malloc((sizeof(t_forks) * vars->nbr_of_philosophers) + 1);
+	pthread_mutex_init(&vars->printf_mutex, NULL);
+	pthread_mutex_init(&vars->philo_died_mutex, NULL);
+	vars->philo_died = 0;
 	return (0);
 }
 
@@ -62,13 +65,13 @@ int	ft_init_structs(t_prgrm *vars)
 	while (nbr_philos > 0)
 	{
 		pthread_mutex_init(&vars->forks[i].mutex, NULL);
-		pthread_mutex_init(&vars->printf_mutex, NULL);
+		pthread_mutex_init(&vars->philos[i].philo_died_mutex, NULL);
 		vars->philos[i].id = i + 1;
 		vars->philos[i].time_to_die = vars->time_to_die;
 		vars->philos[i].time_to_eat = vars->time_to_eat;
 		vars->philos[i].time_to_sleep = vars->time_to_sleep;
 		vars->philos[i].start_time = vars->start_time;
-		vars->philos[i].last_meal = 0;
+		vars->philos[i].last_meal = ft_get_time();
 		vars->philos[i].philo_died = &vars->philo_died;
 		vars->philos[i].printf_mutex = &vars->printf_mutex;
 		vars->forks[i].id = i + 1;
@@ -81,6 +84,25 @@ int	ft_init_structs(t_prgrm *vars)
 		nbr_philos--;
 		i++;
 	}
+	return (0);
+}
+
+int	ft_free_structs(t_prgrm *vars)
+{
+	int	i;
+
+	i = 0;
+	while (i < vars->nbr_of_philosophers)
+	{
+		pthread_mutex_destroy(&vars->philos[i].philo_died_mutex);
+		pthread_mutex_destroy(&vars->philos[i].last_meal_mutex);
+		pthread_mutex_destroy(&vars->forks[i].mutex);
+		i++;
+	}
+	free(vars->philos);
+	free(vars->forks);
+	pthread_mutex_destroy(&vars->printf_mutex);
+	pthread_mutex_destroy(&vars->philo_died_mutex);
 	return (0);
 }
 
@@ -115,6 +137,7 @@ int	main(int argc, char **argv)
 	}
 	else
 		ft_error(1);
+	ft_free_structs(&vars);
 	return (0);
 }
 
