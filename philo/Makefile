@@ -23,6 +23,7 @@ OBJ_DIR				:= ./objs/
 GREEN				:= \033[0;92m
 YELLOW				:= \033[0;93m
 BLUE				:= \033[0;94m
+GREY				:= \033[2;30m
 END_COLOR			:= \033[0;39m
 
 # **************************************************************************** #
@@ -42,14 +43,14 @@ OBJ					:= $(addprefix $(OBJ_DIR), $(OBJ_FILES))
 # all :	$(OBJ_DIR) $(NAME)
 all : $(NAME)
 
-$(NAME):  $(OBJ_DIR) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@echo "$(GREEN)$(NAME) compiled :)$(END_COLOR)"
+$(NAME):	$(OBJ_DIR) $(OBJ)
+			$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+			@echo "\n$(GREEN)Program '$(NAME)' compiled successfully.\n$(END_COLOR)"
 # -C	:	make option that tells make to change directory before execution.
 
 
 $(OBJ_DIR)%.o : $(SRC_DIR)%.c
-	$(CC) $(CFLAGS)  -c $< -o $@ $(INCS)
+				$(CC) $(CFLAGS)  -c $< -o $@ $(INCS)
 # -c	:	gcc option to compile each .c file into .o file.
 # $<	:	represents the first prerequisite of the rule (each .c file 
 #			contained in the src folder).
@@ -70,10 +71,12 @@ clean:
 	$(RM) $(OBJ)
 
 fclean: clean
+	@echo "$(BLUE)Cleaning up...$(END_COLOR)"
 	$(RM) $(NAME)
 	$(RM) $(OBJ_DIR)
+	@echo "$(GREEN)Clean up successfull.$(END_COLOR)"
 
 re: fclean all
-	@echo "$(GREEN) Cleaned all and rebuild $(NAME)!$(END_COLOR)"
+	@echo "$(GREEN)Cleaned all and rebuilt program '$(NAME)'!$(END_COLOR)"
 
 .PHONY:		all clean fclean re

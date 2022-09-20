@@ -6,11 +6,11 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 15:51:34 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 15:55:55 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 22:30:03 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 int	ft_join_threads(t_prgrm *vars)
 {

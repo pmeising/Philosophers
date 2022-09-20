@@ -6,11 +6,11 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 09:47:54 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 20:25:47 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 22:29:53 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 void	ft_error(int ecode)
 {
