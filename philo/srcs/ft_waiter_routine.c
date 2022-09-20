@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 21:54:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 20:48:58 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 23:33:02 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	*ft_waiter_routine(void *args)
 {
 	t_prgrm	*vars;
 	int		i;
+	int		j;
 
 	vars = (t_prgrm *)args;
 	i = 0;
@@ -51,9 +52,14 @@ void	*ft_waiter_routine(void *args)
 		pthread_mutex_lock(&vars->philos[i].last_meal_mutex);
 		if ((ft_get_time() - vars->philos[i].last_meal) >= vars->time_to_die)
 		{
-			pthread_mutex_lock(&vars->philos[i].philo_died_mutex);
-			vars->philos[i].philo_died = 1;
-			pthread_mutex_unlock(&vars->philos[i].philo_died_mutex);
+			j = 0;
+			while (j < vars->nbr_of_philosophers)
+			{
+				pthread_mutex_lock(&vars->philos[j].philo_died_mutex);
+				vars->philos[j].philo_died = 1;
+				pthread_mutex_unlock(&vars->philos[j].philo_died_mutex);
+				j++;
+			}
 			usleep(1000);
 			pthread_mutex_lock(&vars->printf_mutex);
 			printf("%ld: %d died.\n", ft_get_time() - vars->start_time, i + 1);

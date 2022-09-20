@@ -12,6 +12,32 @@
 
 #include "../inc/philosophers.h"
 
+int	ft_check_if_dead(t_philos *philosopher)
+{
+	pthread_mutex_lock(&philosopher->philo_died_mutex);
+	if (philosopher->philo_died == 1)
+	{
+		pthread_mutex_unlock(&philosopher->philo_died_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&philosopher->philo_died_mutex);
+	return (0);
+}
+
+void	ft_unlock_forks(t_philos *philosopher)
+{
+	if (philosopher->id % 2)
+	{
+		pthread_mutex_unlock(&philosopher->left_fork->mutex);
+		pthread_mutex_unlock(&philosopher->right_fork->mutex);
+	}
+	else
+	{
+		pthread_mutex_unlock(&philosopher->right_fork->mutex);
+		pthread_mutex_unlock(&philosopher->left_fork->mutex);
+	}
+}
+
 void	ft_pick_up_forks(t_philos *philosopher)
 {
 	long	time;
@@ -50,13 +76,11 @@ void	ft_philo_eat(t_philos *philosopher)
 	pthread_mutex_lock(&philosopher->last_meal_mutex);
 	philosopher->last_meal = time;
 	pthread_mutex_unlock(&philosopher->last_meal_mutex);
-	pthread_mutex_lock(&philosopher->philo_died_mutex);
-	if (philosopher->philo_died == 1)
+	if (ft_check_if_dead(philosopher) == 1)
 	{
-		pthread_mutex_unlock(&philosopher->philo_died_mutex);
+		ft_unlock_forks(philosopher);
 		return ;
 	}
-	pthread_mutex_unlock(&philosopher->philo_died_mutex);
 	if (philosopher->argc == 6)
 	{
 		pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
@@ -68,35 +92,14 @@ void	ft_philo_eat(t_philos *philosopher)
 	pthread_mutex_unlock(philosopher->printf_mutex);
 	while (ft_get_time() < end_of_meal)
 	{
-		pthread_mutex_lock(&philosopher->philo_died_mutex);
-		if (philosopher->philo_died == 1)
+		if (ft_check_if_dead(philosopher) == 1)
 		{
-			pthread_mutex_unlock(&philosopher->philo_died_mutex);
-			if (philosopher->id % 2)
-			{
-				pthread_mutex_unlock(&philosopher->left_fork->mutex);
-				pthread_mutex_unlock(&philosopher->right_fork->mutex);
-			}
-			else
-			{
-				pthread_mutex_unlock(&philosopher->right_fork->mutex);
-				pthread_mutex_unlock(&philosopher->left_fork->mutex);
-			}
+			ft_unlock_forks(philosopher);
 			return ;
 		}
-		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		usleep(100);
 	}
-	if (philosopher->id % 2)
-	{
-		pthread_mutex_unlock(&philosopher->left_fork->mutex);
-		pthread_mutex_unlock(&philosopher->right_fork->mutex);
-	}
-	else
-	{
-		pthread_mutex_unlock(&philosopher->right_fork->mutex);
-		pthread_mutex_unlock(&philosopher->left_fork->mutex);
-	}
+	ft_unlock_forks(philosopher);
 }
 
 void	ft_philo_sleep(t_philos *philosopher)
@@ -184,18 +187,12 @@ void	*ft_routine(void *args)
 		if (philosopher->id % 2 == 0)
 			usleep(2000);
 		// printf("Did philo die? %d\n", *philosopher->philo_died);
-		pthread_mutex_lock(&philosopher->philo_died_mutex);
-		if (philosopher->philo_died == 1)
-		{
-			pthread_mutex_unlock(&philosopher->philo_died_mutex);
+		if (ft_check_if_dead(philosopher) == 1)
 			return (NULL);
-		}
-		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		ft_pick_up_forks(philosopher);
 		ft_philo_eat(philosopher);
-		// Saves time of last meal.
-		
-		// Sleeps the requested time interval and just sits there.
+		if (ft_check_if_dead(philosopher) == 1)
+			return (NULL);
 		ft_philo_sleep(philosopher);
 		if (philosopher->argc == 6)
 			if (*philosopher->meals_to_eat == 0)

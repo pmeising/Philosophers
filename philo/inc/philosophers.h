@@ -6,12 +6,12 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 20:50:32 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 23:55:10 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILOSOPHERS_H
+# define _PHILOSOPHERS_H
 # define MAXINT 2147483647
 # include <unistd.h>
 # include <stdio.h>
@@ -29,7 +29,7 @@ typedef struct s_forks
 
 // Philo structure______________________//
 
-typedef	struct s_philos
+typedef struct s_philos
 {
 	int				id;
 	int				argc;
@@ -41,32 +41,23 @@ typedef	struct s_philos
 	long			start_time;
 	long			last_meal;
 	int				philo_died;
-	pthread_t		thread;
-	
-	//_________forks_________//
-	
 	t_forks			*left_fork;
 	t_forks			*right_fork;
-
-	//_________mutexes_________//
-
+	pthread_t		thread;
 	pthread_mutex_t	philo_died_mutex;
 	pthread_mutex_t	last_meal_mutex;
 	pthread_mutex_t	*printf_mutex;
 	pthread_mutex_t	meals_to_eat_mutex;
-	
 }				t_philos;
 
-
-// Program variables structure_____________//
+//_______________Program variables structure_____________//
 
 typedef struct s_prgrm
 {
-	pthread_t		*thread_ids; // stores the IDs of each thread at the index of its value
+	pthread_t		*thread_ids;
 	pthread_t		waiter;
 	int				*meals_to_eat;
-	long			start_time; // stores the starting time.
-// inputs:
+	long			start_time;
 	int				argc;
 	int				nbr_of_philosophers;
 	int				time_to_die;
@@ -88,12 +79,14 @@ int		ft_atoi_phil(const char *nptr);
 
 int		ft_start_routine(t_prgrm *vars);
 void	*ft_routine(void *args);
-int		ft_join_threads(t_prgrm *vars);
 void	*ft_waiter_routine(void *args);
+void	ft_lone_thinker(t_prgrm *vars);
 
-// Time management:
+// Utils:
 
-long	ft_get_time();
+long	ft_get_time(void);
+int		ft_free_structs(t_prgrm *vars);
+int		ft_join_threads(t_prgrm *vars);
 
 // Error handling:
 
