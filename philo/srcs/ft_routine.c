@@ -10,7 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
+
+void	ft_pick_up_forks(t_philos *philosopher)
+{
+	long	time;
+
+	pthread_mutex_lock(&philosopher->philo_died_mutex);
+	if (philosopher->philo_died == 1)
+	{
+		pthread_mutex_unlock(&philosopher->philo_died_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philosopher->philo_died_mutex);
+	if (philosopher->id % 2)
+	{
+		pthread_mutex_lock(&philosopher->right_fork->mutex);
+		pthread_mutex_lock(&philosopher->left_fork->mutex);
+	}
+	else
+	{
+		pthread_mutex_lock(&philosopher->left_fork->mutex);
+		pthread_mutex_lock(&philosopher->right_fork->mutex);
+	}
+	pthread_mutex_lock(philosopher->printf_mutex);
+	time = ft_get_time();
+	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time), philosopher->id, philosopher->left_fork->id);
+	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time), philosopher->id, philosopher->right_fork->id);
+	pthread_mutex_unlock(philosopher->printf_mutex);
+}
 
 void	ft_philo_eat(t_philos *philosopher)
 {
@@ -23,33 +51,51 @@ void	ft_philo_eat(t_philos *philosopher)
 	philosopher->last_meal = time;
 	pthread_mutex_unlock(&philosopher->last_meal_mutex);
 	pthread_mutex_lock(&philosopher->philo_died_mutex);
-	if (*philosopher->philo_died == 1)
+	if (philosopher->philo_died == 1)
 	{
 		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		return ;
 	}
 	pthread_mutex_unlock(&philosopher->philo_died_mutex);
-	pthread_mutex_lock(philosopher->printf_mutex);
-	printf("%ld: %d has taken a fork.\n", (time - philosopher->start_time), philosopher->id);
-	printf("%ld: %d has taken a fork.\n", (time - philosopher->start_time), philosopher->id);
-	printf("%ld: %d is eating.\n", (time - philosopher->start_time), philosopher->id);
-	pthread_mutex_unlock(philosopher->printf_mutex);
 	if (philosopher->argc == 6)
 	{
 		pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
 		*philosopher->meals_to_eat = *philosopher->meals_to_eat - 1;
 		pthread_mutex_unlock(&philosopher->meals_to_eat_mutex);
 	}
+	pthread_mutex_lock(philosopher->printf_mutex);
+	printf("%ld: %d is eating.\n", (time - philosopher->start_time), philosopher->id);
+	pthread_mutex_unlock(philosopher->printf_mutex);
 	while (ft_get_time() < end_of_meal)
 	{
 		pthread_mutex_lock(&philosopher->philo_died_mutex);
-		if (*philosopher->philo_died == 1)
+		if (philosopher->philo_died == 1)
 		{
 			pthread_mutex_unlock(&philosopher->philo_died_mutex);
+			if (philosopher->id % 2)
+			{
+				pthread_mutex_unlock(&philosopher->left_fork->mutex);
+				pthread_mutex_unlock(&philosopher->right_fork->mutex);
+			}
+			else
+			{
+				pthread_mutex_unlock(&philosopher->right_fork->mutex);
+				pthread_mutex_unlock(&philosopher->left_fork->mutex);
+			}
 			return ;
 		}
 		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		usleep(100);
+	}
+	if (philosopher->id % 2)
+	{
+		pthread_mutex_unlock(&philosopher->left_fork->mutex);
+		pthread_mutex_unlock(&philosopher->right_fork->mutex);
+	}
+	else
+	{
+		pthread_mutex_unlock(&philosopher->right_fork->mutex);
+		pthread_mutex_unlock(&philosopher->left_fork->mutex);
 	}
 }
 
@@ -61,21 +107,25 @@ void	ft_philo_sleep(t_philos *philosopher)
 	time = ft_get_time();
 	end_of_nap = time + philosopher->time_to_sleep;
 	pthread_mutex_lock(&philosopher->philo_died_mutex);
-	if (*philosopher->philo_died == 1)
+	if (philosopher->philo_died == 1)
 	{
 		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		return ;
 	}
 	pthread_mutex_unlock(&philosopher->philo_died_mutex);
+
+	pthread_mutex_lock(&philosopher->meals_to_eat_mutex);
 	if (*philosopher->meals_to_eat == 0)
 		return ;
+	pthread_mutex_unlock(&philosopher->meals_to_eat_mutex);
+
 	pthread_mutex_lock(philosopher->printf_mutex);
 	printf("%ld: %d is sleeping.\n", time - philosopher->start_time, philosopher->id);
 	pthread_mutex_unlock(philosopher->printf_mutex);
 	while (ft_get_time() < end_of_nap)
 	{
 		pthread_mutex_lock(&philosopher->philo_died_mutex);
-		if (*philosopher->philo_died == 1)
+		if (philosopher->philo_died == 1)
 		{
 			pthread_mutex_unlock(&philosopher->philo_died_mutex);
 			return ;
@@ -92,7 +142,7 @@ void	ft_philo_think(t_philos *philosopher)
 
 	time = ft_get_time();
 	pthread_mutex_lock(&philosopher->philo_died_mutex);
-	if (*philosopher->philo_died == 1)
+	if (philosopher->philo_died == 1)
 	{
 		pthread_mutex_unlock(&philosopher->philo_died_mutex);
 		return ;
@@ -113,7 +163,7 @@ void	ft_philo_think(t_philos *philosopher)
 		while (ft_get_time() < end_of_thinking)
 		{
 			pthread_mutex_lock(&philosopher->philo_died_mutex);
-			if (*philosopher->philo_died == 1)
+			if (philosopher->philo_died == 1)
 			{
 				pthread_mutex_unlock(&philosopher->philo_died_mutex);
 				return ;
@@ -132,20 +182,17 @@ void	*ft_routine(void *args)
 	while (1)
 	{
 		if (philosopher->id % 2 == 0)
-			usleep(1000);
+			usleep(2000);
 		// printf("Did philo die? %d\n", *philosopher->philo_died);
 		pthread_mutex_lock(&philosopher->philo_died_mutex);
-		if (*philosopher->philo_died == 1)
+		if (philosopher->philo_died == 1)
 		{
 			pthread_mutex_unlock(&philosopher->philo_died_mutex);
 			return (NULL);
 		}
 		pthread_mutex_unlock(&philosopher->philo_died_mutex);
-		pthread_mutex_lock(&philosopher->left_fork->mutex);
-		pthread_mutex_lock(&philosopher->right_fork->mutex);
+		ft_pick_up_forks(philosopher);
 		ft_philo_eat(philosopher);
-		pthread_mutex_unlock(&philosopher->left_fork->mutex);
-		pthread_mutex_unlock(&philosopher->right_fork->mutex);		
 		// Saves time of last meal.
 		
 		// Sleeps the requested time interval and just sits there.

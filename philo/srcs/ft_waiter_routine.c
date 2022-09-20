@@ -6,28 +6,34 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 21:54:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 22:41:06 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 20:48:58 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 int	ft_check_if_finished(t_prgrm *vars)
 {
 	int	i;
+	int	j;
 
 	i = 0;
-	pthread_mutex_lock(&vars->meals_to_eat_mutex);
-	while (vars->meals_to_eat[i])
+	j = 0;
+	while (j < vars->nbr_of_philosophers)
 	{
-		if (vars->meals_to_eat[i] != 0)
+		pthread_mutex_lock(&vars->philos[j].meals_to_eat_mutex);
+		while (vars->meals_to_eat[i])
 		{
-			pthread_mutex_unlock(&vars->meals_to_eat_mutex);
-			return (1);
+			if (vars->meals_to_eat[i] != 0)
+			{
+				pthread_mutex_unlock(&vars->philos[j].meals_to_eat_mutex);
+				return (1);
+			}
+			i++;
 		}
-		i++;
+		pthread_mutex_unlock(&vars->philos[j].meals_to_eat_mutex);
+		j++;
 	}
-	pthread_mutex_unlock(&vars->meals_to_eat_mutex);
 	return (0);
 }
 
@@ -45,9 +51,10 @@ void	*ft_waiter_routine(void *args)
 		pthread_mutex_lock(&vars->philos[i].last_meal_mutex);
 		if ((ft_get_time() - vars->philos[i].last_meal) >= vars->time_to_die)
 		{
-			pthread_mutex_lock(&vars->philo_died_mutex);
-			vars->philo_died = 1;
-			pthread_mutex_unlock(&vars->philo_died_mutex);
+			pthread_mutex_lock(&vars->philos[i].philo_died_mutex);
+			vars->philos[i].philo_died = 1;
+			pthread_mutex_unlock(&vars->philos[i].philo_died_mutex);
+			usleep(1000);
 			pthread_mutex_lock(&vars->printf_mutex);
 			printf("%ld: %d died.\n", ft_get_time() - vars->start_time, i + 1);
 			pthread_mutex_unlock(&vars->printf_mutex);

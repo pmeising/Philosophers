@@ -6,11 +6,11 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 12:51:31 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/15 12:51:50 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 20:50:44 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 static int	ft_is_negative(char *nptr, int i)
 {

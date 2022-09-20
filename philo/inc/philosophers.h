@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 22:26:15 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 20:50:32 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef	struct s_philos
 	int				*meals_to_eat;
 	long			start_time;
 	long			last_meal;
-	int				*philo_died;
+	int				philo_died;
 	pthread_t		thread;
 	
 	//_________forks_________//
@@ -78,7 +78,6 @@ typedef struct s_prgrm
 	t_forks			*forks;
 	pthread_mutex_t	printf_mutex;
 	pthread_mutex_t	philo_died_mutex;
-	pthread_mutex_t	meals_to_eat_mutex;
 }				t_prgrm;
 
 // Input check functions:

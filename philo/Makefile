@@ -1,64 +1,79 @@
 # **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/09/01 09:28:01 by pmeising          #+#    #+#              #
-#    Updated: 2022/09/15 12:51:08 by pmeising         ###   ########.fr        #
-#                                                                              #
+# VARIABLES
+
+NAME				:= philo
+
+CC					:= gcc
+CFLAGS				:= -Wall -Wextra -Werror -pthread
+DEBUG				:= none
+ifeq ($(DEBUG), ON)
+	CFLAGS			:= -Wall -Wextra -Werror -pthread -fsanitize=thread -g
+endif
+
+RM					:= rm -rf
+INCS				:= -I ./inc/
+HEADER				:= ./inc/philosophers.h
+
+SRC_DIR				:= ./srcs/
+OBJ_DIR				:= ./objs/
+
 # **************************************************************************** #
+# COLORS
 
-NAME		:= philo
+GREEN				:= \033[0;92m
+YELLOW				:= \033[0;93m
+BLUE				:= \033[0;94m
+END_COLOR			:= \033[0;39m
 
-BONUS		:= philo_bonus
+# **************************************************************************** #
+# SOURCES
 
-CC			:= gcc -g -pthread
+SRC_FILES			:=	main.c ft_error.c ft_input_check.c ft_routine.c \
+						ft_thread_management.c ft_waiter_routine.c ft_atoi_phil.c \
 
-CFLAGS		:= -Werror -Wextra -Wall -fsanitize=thread
+OBJ_FILES			:= ${SRC_FILES:.c=.o}
 
-RM			:= rm -f
+SRC					:= $(addprefix $(SRC_DIR), $(SRC_FILES))
+OBJ					:= $(addprefix $(OBJ_DIR), $(OBJ_FILES))
 
-HEADER		:= philosophers.h
+# **************************************************************************** #
+# RULES
 
-DIR			:= ./srcs/
+# all :	$(OBJ_DIR) $(NAME)
+all : $(NAME)
 
-SRCS		:= $(DIR)main.c	\
-			:= $(DIR)ft_error.c	\
+$(NAME):  $(OBJ_DIR) $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@echo "$(GREEN)$(NAME) compiled :)$(END_COLOR)"
+# -C	:	make option that tells make to change directory before execution.
 
-OBJS		:= ${SRCS:.c=.o}
 
-#___________________________###_______________________________________________________#
-#	colours
+$(OBJ_DIR)%.o : $(SRC_DIR)%.c
+	$(CC) $(CFLAGS)  -c $< -o $@ $(INCS)
+# -c	:	gcc option to compile each .c file into .o file.
+# $<	:	represents the first prerequisite of the rule (each .c file 
+#			contained in the src folder).
+# -o	:	gcc option to define the name of the program (output) file :
+#			"push_swap".
+# $@	:	represents the filename of the target of the rule, i.e. each output
+#			file which will be linked with the so_long.h header file.
 
-C_GREEN		:= \033[0;92m
-C_YELLOW	:= \033[0;93m
-C_BLUE		:= \033[0;94m
-C_STD		:= \033[0;39m
-C_GREY		:= \033[2;30m
-C_RED		:= \033[31m
+$(OBJ_DIR):
+	@mkdir $(OBJ_DIR)
+
+debug:  $(OBJ_DIR) $(OBJ)
+	$(CC) $(CFLAGS_SANITIZE) $(OBJ) -o $(NAME)
+	@echo "$(YELLOW)/!\ $(NAME) compiled with -fsanitize=thread -g flag!$(END_COLOR)"
+# -C	:	make option that tells make to change directory before execution.
+
+clean: 
+	$(RM) $(OBJ)
+
+fclean: clean
+	$(RM) $(NAME)
+	$(RM) $(OBJ_DIR)
+
+re: fclean all
+	@echo "$(GREEN) Cleaned all and rebuild $(NAME)!$(END_COLOR)"
 
 .PHONY:		all clean fclean re
-
-all:		${NAME}
-
-%.o: %.c	
-			@echo "$(C_GREY)~"
-			$(CC) $(CFLAGS) -c $< -o $@
-
-$(NAME):	$(OBJS)
-			@echo "$(C_BLUE)Making o-files and compiling program.$(C_STD)"
-			$(CC) $(OBJS) -o $(NAME)
-			@echo "$(C_GREEN)<<.........................compilation complete................................>>$(C_STD)"
-
-bonus:
-
-re:			fclean all
-
-clean:
-			$(RM) $(OBJS) $(B_OBJS)
-
-fclean:		clean
-			$(RM) $(NAME) $(BONUS)
-

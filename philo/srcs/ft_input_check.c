@@ -6,11 +6,11 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 14:45:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/16 15:57:36 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 20:48:06 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 int	ft_is_nbr(char **argv)
 {

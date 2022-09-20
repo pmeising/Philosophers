@@ -6,11 +6,11 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:57:51 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/18 22:43:18 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/20 20:49:31 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philosophers.h"
+#include "../inc/philosophers.h"
 
 // I add the seconds * 1000 to the microseconds / 1000 to get one big number 
 // containing the miliseconds of the moment of start.
@@ -39,6 +39,11 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 		vars->nbr_of_meals = ft_atoi_phil(argv[5]);
 		vars->meals_to_eat = malloc((sizeof(int) * vars->nbr_of_meals) + 1);
 	}
+	else
+	{
+		vars->nbr_of_meals = 10;
+		vars->meals_to_eat = malloc((sizeof(int) * vars->nbr_of_meals) + 1);
+	}
 	if (ft_check_values(vars) == 1)
 	{
 		ft_error(3);
@@ -50,7 +55,7 @@ int	ft_init_vars(t_prgrm *vars, int argc, char **argv)
 	vars->forks = malloc((sizeof(t_forks) * vars->nbr_of_philosophers) + 1);
 	pthread_mutex_init(&vars->printf_mutex, NULL);
 	pthread_mutex_init(&vars->philo_died_mutex, NULL);
-	pthread_mutex_init(&vars->meals_to_eat_mutex, NULL);
+	// pthread_mutex_init(&vars->meals_to_eat_mutex, NULL);
 	vars->philo_died = 0;
 	return (0);
 }
@@ -70,6 +75,7 @@ int	ft_init_structs(t_prgrm *vars)
 	{
 		pthread_mutex_init(&vars->forks[i].mutex, NULL);
 		pthread_mutex_init(&vars->philos[i].philo_died_mutex, NULL);
+		pthread_mutex_init(&vars->philos[i].last_meal_mutex, NULL);
 		pthread_mutex_init(&vars->philos[i].meals_to_eat_mutex, NULL);
 		vars->philos[i].id = i + 1;
 		vars->philos[i].argc = vars->argc;
@@ -78,14 +84,11 @@ int	ft_init_structs(t_prgrm *vars)
 		vars->philos[i].time_to_sleep = vars->time_to_sleep;
 		vars->philos[i].start_time = vars->start_time;
 		vars->philos[i].last_meal = ft_get_time();
-		vars->philos[i].philo_died = &vars->philo_died;
+		vars->philos[i].philo_died = 0;
 		vars->philos[i].printf_mutex = &vars->printf_mutex;
 		vars->forks[i].id = i + 1;
-		if (vars->argc == 6)
-		{
-			vars->meals_to_eat[i] = vars->nbr_of_meals;
-			vars->philos[i].meals_to_eat = &vars->meals_to_eat[i];
-		}
+		vars->meals_to_eat[i] = vars->nbr_of_meals;
+		vars->philos[i].meals_to_eat = &vars->meals_to_eat[i];
 		// printf("Mutex created.\n");
 		vars->philos[i].left_fork = &vars->forks[i];
 		if (i == 0)
@@ -110,6 +113,7 @@ int	ft_free_structs(t_prgrm *vars)
 		pthread_mutex_destroy(&vars->forks[i].mutex);
 		i++;
 	}
+	free(vars->meals_to_eat);
 	free(vars->philos);
 	free(vars->forks);
 	pthread_mutex_destroy(&vars->printf_mutex);
@@ -147,7 +151,10 @@ int	main(int argc, char **argv)
 		}
 	}
 	else
+	{
 		ft_error(1);
+		return (0);
+	}
 	ft_free_structs(&vars);
 	return (0);
 }
