@@ -29,8 +29,8 @@ END_COLOR			:= \033[0;39m
 # **************************************************************************** #
 # SOURCES
 
-SRC_FILES			:=	main.c ft_error.c ft_input_check.c ft_routine.c ft_lone_thinker.c \
-						ft_thread_management.c ft_waiter_routine.c ft_atoi_phil.c \
+SRC_FILES			:=	ft_atoi_phil.c ft_eat_sleep_think.c ft_error.c ft_input_check.c \
+						ft_lone_thinker.c ft_routine.c ft_utils.c ft_waiter_routine.c main.c \
 
 OBJ_FILES			:= ${SRC_FILES:.c=.o}
 

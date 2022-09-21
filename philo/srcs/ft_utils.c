@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/16 15:51:34 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 23:55:29 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/21 10:51:10 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,14 @@ int	ft_free_structs(t_prgrm *vars)
 	return (0);
 }
 
-
+int	ft_check_if_dead(t_philos *philosopher)
+{
+	pthread_mutex_lock(&philosopher->philo_died_mutex);
+	if (philosopher->philo_died == 1)
+	{
+		pthread_mutex_unlock(&philosopher->philo_died_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&philosopher->philo_died_mutex);
+	return (0);
+}

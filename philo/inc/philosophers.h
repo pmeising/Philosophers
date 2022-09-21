@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 08:56:33 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 23:55:10 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/21 11:06:21 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,10 @@ int		ft_atoi_phil(const char *nptr);
 
 int		ft_start_routine(t_prgrm *vars);
 void	*ft_routine(void *args);
+void	ft_unlock_forks(t_philos *philosopher);
+void	ft_philo_eat(t_philos *philosopher);
+void	ft_philo_sleep(t_philos *philosopher);
+void	ft_philo_think(t_philos *philosopher);
 void	*ft_waiter_routine(void *args);
 void	ft_lone_thinker(t_prgrm *vars);
 
@@ -87,6 +91,7 @@ void	ft_lone_thinker(t_prgrm *vars);
 long	ft_get_time(void);
 int		ft_free_structs(t_prgrm *vars);
 int		ft_join_threads(t_prgrm *vars);
+int		ft_check_if_dead(t_philos *philosopher);
 
 // Error handling:
 

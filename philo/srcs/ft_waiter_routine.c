@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 21:54:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 23:33:02 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/21 10:44:31 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,36 @@ int	ft_check_if_finished(t_prgrm *vars)
 	return (0);
 }
 
+void	*ft_helper(t_prgrm *vars, int i)
+{
+	int	j;
+
+	pthread_mutex_lock(&vars->philos[i].last_meal_mutex);
+	if ((ft_get_time() - vars->philos[i].last_meal) >= vars->time_to_die)
+	{
+		j = 0;
+		while (j < vars->nbr_of_philosophers)
+		{
+			pthread_mutex_lock(&vars->philos[j].philo_died_mutex);
+			vars->philos[j].philo_died = 1;
+			pthread_mutex_unlock(&vars->philos[j].philo_died_mutex);
+			j++;
+		}
+		usleep(1000);
+		pthread_mutex_lock(&vars->printf_mutex);
+		printf("%ld: %d died.\n", ft_get_time() - vars->start_time, i + 1);
+		pthread_mutex_unlock(&vars->printf_mutex);
+		pthread_mutex_unlock(&vars->philos[i].last_meal_mutex);
+		return (NULL);
+	}
+	pthread_mutex_unlock(&vars->philos[i].last_meal_mutex);
+	return ("Keep going.");
+}
+
 void	*ft_waiter_routine(void *args)
 {
 	t_prgrm	*vars;
 	int		i;
-	int		j;
 
 	vars = (t_prgrm *)args;
 	i = 0;
@@ -49,25 +74,8 @@ void	*ft_waiter_routine(void *args)
 	{
 		if (ft_check_if_finished(vars) == 0)
 			return (NULL);
-		pthread_mutex_lock(&vars->philos[i].last_meal_mutex);
-		if ((ft_get_time() - vars->philos[i].last_meal) >= vars->time_to_die)
-		{
-			j = 0;
-			while (j < vars->nbr_of_philosophers)
-			{
-				pthread_mutex_lock(&vars->philos[j].philo_died_mutex);
-				vars->philos[j].philo_died = 1;
-				pthread_mutex_unlock(&vars->philos[j].philo_died_mutex);
-				j++;
-			}
-			usleep(1000);
-			pthread_mutex_lock(&vars->printf_mutex);
-			printf("%ld: %d died.\n", ft_get_time() - vars->start_time, i + 1);
-			pthread_mutex_unlock(&vars->printf_mutex);
-			pthread_mutex_unlock(&vars->philos[i].last_meal_mutex);
+		if (ft_helper(vars, i) == NULL)
 			return (NULL);
-		}
-		pthread_mutex_unlock(&vars->philos[i].last_meal_mutex);
 		if (i < vars->nbr_of_philosophers - 1)
 			i++;
 		else
