@@ -6,11 +6,24 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/21 10:53:04 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/21 10:54:27 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/21 12:58:45 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
+
+void	ft_helper_4(t_philos *philosopher)
+{
+	long	time;
+
+	pthread_mutex_lock(philosopher->printf_mutex);
+	time = ft_get_time();
+	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time),
+		philosopher->id, philosopher->left_fork->id);
+	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time),
+		philosopher->id, philosopher->right_fork->id);
+	pthread_mutex_unlock(philosopher->printf_mutex);
+}
 
 void	ft_unlock_forks(t_philos *philosopher)
 {
@@ -28,27 +41,23 @@ void	ft_unlock_forks(t_philos *philosopher)
 
 void	ft_pick_up_forks(t_philos *philosopher)
 {
-	long	time;
-
-	if (ft_check_if_dead(philosopher) == 1)
-		return ;
-	if (philosopher->id % 2)
+	if (ft_check_if_dead(philosopher) != 1)
 	{
-		pthread_mutex_lock(&philosopher->right_fork->mutex);
-		pthread_mutex_lock(&philosopher->left_fork->mutex);
+		if (philosopher->id % 2)
+		{
+			pthread_mutex_lock(&philosopher->right_fork->mutex);
+			pthread_mutex_lock(&philosopher->left_fork->mutex);
+		}
+		else
+		{
+			pthread_mutex_lock(&philosopher->left_fork->mutex);
+			pthread_mutex_lock(&philosopher->right_fork->mutex);
+		}
+		if (ft_check_if_dead(philosopher) != 1)
+			ft_helper_4(philosopher);
+		else
+			ft_unlock_forks(philosopher);
 	}
-	else
-	{
-		pthread_mutex_lock(&philosopher->left_fork->mutex);
-		pthread_mutex_lock(&philosopher->right_fork->mutex);
-	}
-	pthread_mutex_lock(philosopher->printf_mutex);
-	time = ft_get_time();
-	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time),
-		philosopher->id, philosopher->left_fork->id);
-	printf("%ld: %d has taken fork %d.\n", (time - philosopher->start_time),
-		philosopher->id, philosopher->right_fork->id);
-	pthread_mutex_unlock(philosopher->printf_mutex);
 }
 
 void	*ft_routine(void *args)
@@ -63,10 +72,14 @@ void	*ft_routine(void *args)
 		if (ft_check_if_dead(philosopher) == 1)
 			return (NULL);
 		ft_pick_up_forks(philosopher);
+		if (ft_check_if_dead(philosopher) == 1)
+			return (NULL);
 		ft_philo_eat(philosopher);
 		if (ft_check_if_dead(philosopher) == 1)
 			return (NULL);
 		ft_philo_sleep(philosopher);
+		if (ft_check_if_dead(philosopher) == 1)
+			return (NULL);
 		if (philosopher->argc == 6)
 			if (*philosopher->meals_to_eat == 0)
 				return (NULL);

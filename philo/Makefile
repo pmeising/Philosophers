@@ -46,6 +46,8 @@ all : $(NAME)
 $(NAME):	$(OBJ_DIR) $(OBJ)
 			$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 			@echo "\n$(GREEN)Program '$(NAME)' compiled successfully.\n$(END_COLOR)"
+			@echo "$(GREY)From the subject pdf: The program should take the following arguments:\n * Number_of_philosophers: The number of philosophers and also the number of forks.\n * Time_to_die (in ms): If a philosopher didn’t start eating time_to_die milliseconds since the beginning of their last meal or the beginning of the simulation, they die.\n * Time_to_eat (in ms): The time it takes for a philosopher to eat. During that time, they will need to hold two forks.\n * Time_to_sleep (in ms): The time a philosopher will spend sleeping.\n * Number_of_times_each_philosopher_must_eat (optional argument): If all philosophers have eaten at least number_of_times_each_philosopher_must_eat times, the simulation stops. If not specified, the simulation stops when a philosopher dies.\n * Each philosopher has a number ranging from 1 to number_of_philosophers.\n * Philosopher number 1 sits next to philosopher number number_of_philosophers. Any other philosopher number N sits between philosopher number N - 1 and philosopher number N + 1.$(END_COLOR)"
+			@echo "\n$(BLUE)Syntax: $(END_COLOR) ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep number_of_times_each_philosopher_must_eat \n\n$(GREEN)Example: $(END_COLOR)./philo 5 500 200 200 2\n"
 # -C	:	make option that tells make to change directory before execution.
 
 
