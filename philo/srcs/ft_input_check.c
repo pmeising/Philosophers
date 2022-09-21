@@ -6,7 +6,7 @@
 /*   By: pmeising <pmeising@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 14:45:26 by pmeising          #+#    #+#             */
-/*   Updated: 2022/09/20 23:47:13 by pmeising         ###   ########.fr       */
+/*   Updated: 2022/09/21 21:02:17 by pmeising         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,30 @@ int	ft_input_check(char **argv)
 int	ft_check_values(t_prgrm *vars)
 {
 	if (vars->nbr_of_philosophers > 200 || vars->nbr_of_philosophers < 1)
+	{
+		free (vars->meals_to_eat);
 		return (1);
+	}
+	else if (vars->time_to_die < 1 || vars->time_to_die > MAXINT)
+	{
+		free (vars->meals_to_eat);
+		return (1);
+	}
+	else if (vars->time_to_eat < 1 || vars->time_to_die > MAXINT)
+	{
+		free (vars->meals_to_eat);
+		return (1);
+	}
+	else if (vars->time_to_sleep < 1 || vars->time_to_die > MAXINT)
+	{
+		free (vars->meals_to_eat);
+		return (1);
+	}	
 	else if (vars->argc == 6 && (vars->nbr_of_meals < 1
 			|| vars->nbr_of_meals > MAXINT))
+	{
+		free (vars->meals_to_eat);
 		return (1);
-	else if (vars->time_to_die < 1 || vars->time_to_die > MAXINT)
-		return (1);
-	else if (vars->time_to_eat < 1 || vars->time_to_die > MAXINT)
-		return (1);
-	else if (vars->time_to_sleep < 1 || vars->time_to_die > MAXINT)
-		return (1);
+	}
 	return (0);
 }
